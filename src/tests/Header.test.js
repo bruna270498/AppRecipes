@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
@@ -14,6 +14,46 @@ const inputTestId = 'search-input';
 const nameRadioTestId = 'name-search-radio';
 const btnPesquisarTestId = 'exec-search-btn';
 const firstLetterTesteId = 'first-letter-search-radio';
+
+describe('Verificando Header', () => {
+  it('Verificando botão de Perfil e o titulo', () => {
+    renderWithRouterAndRedux(<App />);
+    const email = screen.getByRole('textbox', { name: /email/i });
+    const senha = screen.getByRole('textbox', { name: /senha/i });
+    const botao = screen.getByRole('button', { name: /entrar/i });
+    fireEvent.change(email, {
+      target: { value: 'breno@gmail.com' },
+    });
+    fireEvent.change(senha, {
+      target: { value: 'OPTION1' },
+    });
+    fireEvent.click(botao);
+    const buttonProfile = screen.getByTestId('profile-top-btn');
+    expect(buttonProfile).toBeInTheDocument();
+    const title = screen.getByTestId('page-title');
+    expect(title).toBeInTheDocument();
+    fireEvent.click(buttonProfile);
+  });
+  test('Verificando se ao clicar no botao de pesquisa o input aparece e desaparece', () => {
+    renderWithRouterAndRedux(<App />);
+    const email = screen.getByRole('textbox', { name: /email/i });
+    const senha = screen.getByRole('textbox', { name: /senha/i });
+    const botao = screen.getByRole('button', { name: /entrar/i });
+    fireEvent.change(email, {
+      target: { value: 'bruno@gmail.com' },
+    });
+    fireEvent.change(senha, {
+      target: { value: 'OPTION1' },
+    });
+    fireEvent.click(botao);
+    const buttonSearch = screen.getByRole('img', { name: /seachimg/i });
+    fireEvent.click(buttonSearch);
+    const inputPesquisa = screen.getByRole('textbox');
+    expect(inputPesquisa).toBeInTheDocument();
+    fireEvent.click(buttonSearch);
+    expect(inputPesquisa).not.toBeInTheDocument();
+  });
+});
 
 describe('Testando a aplicação searchBar', () => {
   it('Verifica se o fetch é feito após clicar no botão meals', () => {

@@ -19,7 +19,7 @@ class Recipes extends Component {
               haveSearch
               history={ history }
             />
-            <CardMeal />
+            <CardMeal history={ history } />
           </div>
         )}
 
@@ -31,7 +31,7 @@ class Recipes extends Component {
               haveSearch
               history={ history }
             />
-            <CardDrink />
+            <CardDrink history={ history } />
           </div>
         )}
         <Footer />

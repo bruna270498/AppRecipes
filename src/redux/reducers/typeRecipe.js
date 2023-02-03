@@ -1,7 +1,9 @@
-import { ADD_TYPE } from '../actions';
+import { ADD_TYPE, ADD_MEALS, ADD_DRINKS } from '../actions';
 
 const INITIAL_STATE = {
   typeRecipe: '',
+  listMeal: [],
+  listDrink: [],
 };
 
 const typeRecipe = (state = INITIAL_STATE, action) => {
@@ -10,6 +12,14 @@ const typeRecipe = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       typeRecipe: action.payload.typeRecipe,
+    };
+  case ADD_MEALS:
+    return {
+      listMeal: action.payload,
+    };
+  case ADD_DRINKS:
+    return {
+      listDrink: action.payload,
     };
   default: return state;
   }
