@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { getCategoryMeals, getMeals, getMealsByCategory } from '../helpers/fetchAPI';
 
 class CardMeal extends Component {
@@ -8,6 +9,7 @@ class CardMeal extends Component {
     objectMeals: [],
     categories: [],
     toggleButton: false,
+    l: true,
   };
 
   componentDidMount() {
@@ -43,11 +45,41 @@ class CardMeal extends Component {
     }
   };
 
+  detailsRedirck = () => {
+    const { history, meal } = this.props;
+    const id = meal[0].idMeal;
+    const number = 12;
+    if (meal.length === 1) {
+      history.push(`/meals/${id}`);
+    }
+
+    const card = meal.slice(0, number).map((e, index) => (
+      <Link
+        key={ e.strMeal + index }
+        to={ `meals/${e.idMeal}` }
+      >
+        <div>
+          <h4 data-testid={ `${index}-card-name` }>{e.strMeal}</h4>
+          <img
+            src={ e.strMealThumb }
+            alt={ e.strMeal }
+            width="100px"
+            height="100px"
+            data-testid={ `${index}-card-img` }
+          />
+          <p data-testid={ `${index}-recipe-card` }>{e.strTags}</p>
+        </div>
+      </Link>
+    ));
+    return card;
+  };
+
   render() {
-    const { objectMeals, categories } = this.state;
+    const { objectMeals, categories, l } = this.state;
+    const { meal } = this.props;
+
     return (
       <div className="globalContainerMeals" data-testid="card-meal">
-        Meals
         <div className="buttonContainer">
           { categories.map((e) => (
             <button
@@ -68,28 +100,29 @@ class CardMeal extends Component {
         </div>
 
         <div className="cardContainer">
-          { objectMeals.map((e, index) => (
-            <Link
-              to={ `meals/${e.idMeal}` }
-              key={ e.idMeal }
-            >
-              <div
-                data-testid={ `${index}-recipe-card` }
-                key={ index }
+          { meal.length >= 1 ? this.detailsRedirck()
+            : objectMeals.map((e, index) => (
+              <Link
+                to={ `meals/${e.idMeal}` }
+                key={ e.idMeal }
               >
-                <p data-testid={ `${index}-card-name` } className="cardName">
-                  { e.strMeal }
-                </p>
+                <div
+                  data-testid={ `${index}-recipe-card` }
+                  key={ index }
+                >
+                  <p data-testid={ `${index}-card-name` }>
+                    { e.strMeal }
+                  </p>
 
-                <img
-                  alt={ e.strMeal }
-                  src={ e.strMealThumb }
-                  data-testid={ `${index}-card-img` }
-                  className="cardImage"
-                />
-              </div>
-            </Link>
-          )) }
+                  <img
+                    alt={ e.strMeal }
+                    src={ e.strMealThumb }
+                    data-testid={ `${index}-card-img` }
+                    className="cardImage"
+                  />
+                </div>
+              </Link>
+            )) }
         </div>
 
       </div>
@@ -97,4 +130,15 @@ class CardMeal extends Component {
   }
 }
 
-export default connect()(CardMeal);
+CardMeal.propTypes = ({
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+  meal: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+});
+
+const mapStateToProps = (stateGlobal) => ({
+  meal: stateGlobal.typeRecipe.listMeal,
+});
+
+export default connect(mapStateToProps)(CardMeal);

@@ -8,56 +8,65 @@ import {
   getDrinksByIngredients,
   getDrinksByName,
   getDrinksByFirstLetter } from '../helpers/fetchAPI';
+import { addMeals, addDrinks } from '../redux/actions';
 
 class SearchBar extends React.Component {
   state = {
     search: '',
+    selected: '',
 
   };
 
-  queryApiDrinks = () => {
-    const { search, name, Ingredient, firstLetter } = this.state;
-    const { history } = this.props;
-    const number = 1;
+  alert = () => {
+    global.alert('Your search must have only 1 (one) character');
+  };
+
+  queryApiDrink = async () => {
+    const { selected, search } = this.state;
+    const { history, dispatch } = this.props;
 
     if (history.location.pathname === '/drinks') {
-      if (name === true) {
-        getDrinksByName(search);
-      } if (Ingredient === true) {
-        getDrinksByIngredients(search);
-      } if (firstLetter === true) {
-        return search.length > number
-          ? global.alert('Your search must have only 1 (one) character')
-          : getDrinksByFirstLetter(search);
+      if (selected === 'ingredient') {
+        dispatch(addDrinks(await getDrinksByIngredients(search)));
+      } if (selected === 'name') {
+        dispatch(addDrinks(await getDrinksByName(search)));
+      } if (selected === 'first-letter') {
+        if (search.length > 1) {
+          this.alert();
+        }
+        dispatch(addDrinks(await getDrinksByFirstLetter(search)));
       }
     }
   };
 
-  queryApi = () => {
-    const { search, name, Ingredient, firstLetter } = this.state;
-    const { history } = this.props;
-    const number = 1;
+  queryApi = async () => {
+    const { selected, search } = this.state;
+    const { history, dispatch } = this.props;
+
     if (history.location.pathname === '/meals') {
-      if (name === true) {
-        getMealsByName(search);
-      } if (Ingredient === true) {
-        getMealsByIngredients(search);
-      } if (firstLetter === true) {
-        return search.length > number
-          ? global.alert('Your search must have only 1 (one) character')
-          : getMealsByFirstLetter(search);
+      if (selected === 'ingredient') {
+        dispatch(addMeals(await getMealsByIngredients(search)));
+      } if (selected === 'name') {
+        dispatch(addMeals(await getMealsByName(search)));
+      } if (selected === 'first-letter') {
+        if (search.length > 1) {
+          this.alert();
+        }
+        dispatch(addMeals(await getMealsByFirstLetter(search)));
       }
     }
-    this.queryApiDrinks();
+    this.queryApiDrink();
   };
 
   render() {
+    const { search } = this.state;
     return (
       <div>
         <input
           data-testid="search-input"
           type="text"
           name="search"
+          value={ search }
           placeholder="Search"
           onChange={ (e) => this.setState({ [e.target.name]: e.target.value }) }
         />
@@ -69,7 +78,7 @@ class SearchBar extends React.Component {
             name="radioSearch"
             value="ingredient"
             id="ingredient-radio"
-            onChange={ (e) => this.setState({ Ingredient: e.target.checked }) }
+            onChange={ (e) => this.setState({ selected: e.target.value }) }
           />
           Ingredient
         </label>
@@ -80,7 +89,7 @@ class SearchBar extends React.Component {
             name="radioSearch"
             value="name"
             id="name-radio"
-            onChange={ (e) => this.setState({ name: e.target.checked }) }
+            onChange={ (e) => this.setState({ selected: e.target.value }) }
           />
           Name
         </label>
@@ -91,7 +100,7 @@ class SearchBar extends React.Component {
             name="radioSearch"
             value="first-letter"
             id="first-letter-radio"
-            onChange={ (e) => this.setState({ firstLetter: e.target.checked }) }
+            onChange={ (e) => this.setState({ selected: e.target.value }) }
           />
           First letter
         </label>
@@ -100,6 +109,7 @@ class SearchBar extends React.Component {
           data-testid="exec-search-btn"
           type="button"
           onClick={ this.queryApi }
+
         >
           Buscar
         </button>
@@ -114,6 +124,7 @@ SearchBar.propTypes = {
       pathname: PropTypes.string.isRequired,
     }),
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect()(SearchBar);

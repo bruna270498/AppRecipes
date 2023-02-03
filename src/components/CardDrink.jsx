@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { getCategoryDrinks, getDrinks, getDrinksByCategory } from '../helpers/fetchAPI';
 
 class CardDrink extends Component {
@@ -43,11 +44,41 @@ class CardDrink extends Component {
     }
   };
 
+  detailsRedirck = () => {
+    const { history, drink } = this.props;
+    const number = 12;
+    if (drink.length === 1) {
+      const id = drink[0].idDrink;
+      history.push(`/drinks/${id}`);
+    }
+
+    const card = drink.slice(0, number).map((e, index) => (
+      <Link
+        key={ e.strDrink + index }
+        to={ `drinks/${e.idMeal}` }
+      >
+        <div>
+          <h4 data-testid={ `${index}-card-name` }>{e.strDrink}</h4>
+          <img
+            src={ e.strDrinkThumb }
+            alt={ e.strDrink }
+            width="100px"
+            height="100px"
+            data-testid={ `${index}-card-img` }
+          />
+          <p data-testid={ `${index}-recipe-card` }>{e.strDrink}</p>
+        </div>
+      </Link>
+    ));
+    return card;
+  };
+
   render() {
     const { objectDrinks, categories } = this.state;
+    const { drink } = this.props;
+
     return (
       <div className="globalContainerDrinks" data-testid="card-drink">
-        Drinks
         <div className="buttonContainer">
           { categories.map((e) => (
             <button
@@ -66,30 +97,30 @@ class CardDrink extends Component {
             All
           </button>
         </div>
-
         <div className="cardContainer">
-          { objectDrinks.map((e, index) => (
-            <Link
-              to={ `drinks/${e.idDrink}` }
-              key={ e.idDrink }
-            >
-              <div
-                data-testid={ `${index}-recipe-card` }
-                key={ index }
+          { drink.length >= 1 ? this.detailsRedirck()
+            : objectDrinks.map((e, index) => (
+              <Link
+                to={ `drinks/${e.idDrink}` }
+                key={ e.idDrink }
               >
-                <p data-testid={ `${index}-card-name` } className="cardName">
-                  { e.strDrink }
-                </p>
+                <div
+                  data-testid={ `${index}-recipe-card` }
+                  key={ index }
+                >
+                  <p data-testid={ `${index}-card-name` }>
+                    { e.strDrink }
+                  </p>
 
-                <img
-                  alt={ e.strDrink }
-                  src={ e.strDrinkThumb }
-                  data-testid={ `${index}-card-img` }
-                  className="cardImage"
-                />
-              </div>
-            </Link>
-          )) }
+                  <img
+                    alt={ e.strDrink }
+                    src={ e.strDrinkThumb }
+                    data-testid={ `${index}-card-img` }
+                    className="cardImage"
+                  />
+                </div>
+              </Link>
+            )) }
         </div>
 
       </div>
@@ -97,4 +128,18 @@ class CardDrink extends Component {
   }
 }
 
-export default connect()(CardDrink);
+CardDrink.propTypes = ({
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string }),
+  }).isRequired,
+
+  drink: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+});
+
+const mapStateToProps = (stateGlobal) => ({
+  drink: stateGlobal.typeRecipe.listDrink,
+});
+
+export default connect(mapStateToProps)(CardDrink);
