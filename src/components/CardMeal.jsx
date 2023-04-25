@@ -9,7 +9,6 @@ class CardMeal extends Component {
     objectMeals: [],
     categories: [],
     toggleButton: false,
-    l: true,
   };
 
   componentDidMount() {
@@ -75,7 +74,7 @@ class CardMeal extends Component {
   };
 
   render() {
-    const { objectMeals, categories, l } = this.state;
+    const { objectMeals, categories } = this.state;
     const { meal } = this.props;
 
     return (

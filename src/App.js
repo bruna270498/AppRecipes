@@ -19,6 +19,14 @@ function App() {
         <Route exact path="/meals" component={ Recipes } />
         <Route exact path="/drinks" component={ Recipes } />
         <Route
+          path="/drinks/:id/in-progress"
+          component={ RecipeInProgress }
+        />
+        <Route
+          path="/meals/:id/in-progress"
+          component={ RecipeInProgress }
+        />
+        <Route
           exact
           path="/meals/:id"
           render={

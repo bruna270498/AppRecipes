@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Header from '../components/Header';
-import CardFavoriteDrinks from '../components/CardFavoriteDrinks';
-import CardFavoriteMeals from '../components/CardFavoriteMeals';
-import Footer from '../components/Footer';
-import FavoriteElements from '../components/FavoriteElements';
+import CardFavoriteDrinks from './CardFavoriteDrinks';
+import CardFavoriteMeals from './CardFavoriteMeals';
+import Footer from './Footer';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 
 class FavoriteRecipes extends React.Component {
@@ -52,15 +50,8 @@ class FavoriteRecipes extends React.Component {
 
   render() {
     const { filter, favoriteRecipes, favoriteDrinks, favoriteMeals } = this.state;
-    const { history } = this.props;
     return (
       <div>
-        <Header
-          title="Favorite Recipes"
-          haveSearch={ false }
-          history={ history }
-        />
-        <FavoriteElements />
         <button
           type="button"
           data-testid="filter-by-all-btn"
